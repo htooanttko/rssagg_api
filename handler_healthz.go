@@ -1,8 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func handlerHealthz(w http.ResponseWriter,r *http.Request) {
+func handlerHealthz(w http.ResponseWriter, r *http.Request) {
 	resWithJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }
 
