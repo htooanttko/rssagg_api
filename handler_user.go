@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/htooanttko/rssagg_api/internal/auth"
 	"github.com/htooanttko/rssagg_api/internal/database"
 )
 
@@ -30,24 +29,12 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 	})
 	if err != nil {
 		resWithErr(w, http.StatusInternalServerError, err.Error())
-		// resWithErr(w, http.StatusInternalServerError,"Couldn't create user")
 		return
 	}
 	
 	resWithJSON(w, http.StatusCreated, dbUsertoUser(user))
 }
 
-func (apiCfg *apiConfig) handlerUserGet(w http.ResponseWriter, r *http.Request) {
-	apiKey,err := auth.GetAPIKey(r.Header)
-	if err != nil {
-		resWithErr(w, http.StatusUnauthorized, err.Error())
-		return
-	}
-
-	user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
-	if err != nil {
-		resWithErr(w, http.StatusNotFound,err.Error())
-	}
-
+func (apiCfg *apiConfig) handlerUserGet(w http.ResponseWriter, r *http.Request, user database.User) {
 	resWithJSON(w, http.StatusOK, dbUsertoUser(user))
 }
