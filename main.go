@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -59,19 +60,30 @@ func main () {
 	v1Router.Get("/healthz/err", handlerErr)
 
 	// user
-	v1Router.Post("/user", apiCfg.handlerCreateUser)
+	v1Router.Post("/user", apiCfg.handlerUserCreate)
 	v1Router.Get("/user", apiCfg.middlewareAuth(apiCfg.handlerUserGet))
 
 	// feed
-	v1Router.Post("/feed", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
+	v1Router.Post("/feed", apiCfg.middlewareAuth(apiCfg.handlerFeedCreate))
 	v1Router.Get("/feed", apiCfg.middlewareAuth(apiCfg.handlerFeedGet))
 	
+	// feed follow
+	v1Router.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerFeedFollowCreate))
+	v1Router.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerFeedFollowGet))
+	v1Router.Delete("/feed_follows/{FeedFollowID}", apiCfg.middlewareAuth(apiCfg.handlerFeedFollowDelete))
+
+	v1Router.Get("/posts",apiCfg.middlewareAuth(apiCfg.handlerPostsGet))
+
 	router.Mount("/v1", v1Router)
 
 	srv := &http.Server{
 		Addr: ":" + port,
 		Handler: router,
 	}
+
+	const collectionConcurrency = 10
+	const collectionInterval = time.Minute
+	go startScraping(dbQueries,collectionConcurrency,collectionInterval)
 	
 	log.Printf("Serving on port: %s\n", port)
 	log.Fatal(srv.ListenAndServe())

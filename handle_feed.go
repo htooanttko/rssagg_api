@@ -8,7 +8,7 @@ import (
 	"github.com/htooanttko/rssagg_api/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg *apiConfig) handlerFeedCreate(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		URL string `json:"url"`

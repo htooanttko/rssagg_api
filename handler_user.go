@@ -8,7 +8,7 @@ import (
 	"github.com/htooanttko/rssagg_api/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) handlerUserCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name string `json:"name"`
 	}
